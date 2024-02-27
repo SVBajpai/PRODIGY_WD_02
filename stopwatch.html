@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Stopwatch</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>body {
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.center-box {
+    text-align: center;
+}
+
+.info-box {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.stopwatch {
+    background: linear-gradient(to right, #667eea, #764ba2);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    width: 100%; /* Enlarged width */
+    text-align: center;
+}
+
+.display {
+    font-size: 48px;
+    color: #fff;
+}
+
+.controls {
+    margin-top: 20px;
+}
+
+.btn {
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.list-group-item {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: none;
+}
+
+.list-group-item:first-child {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.list-group-item:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.list-group {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.lap-highlight {
+    animation: blink 1s infinite;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="center-box">
+            <div class="info-box">
+                <h1>Welcome to our Stopwatch!</h1>
+                <p>This stopwatch allows you to accurately measure time intervals. You can start, stop, and reset the stopwatch as needed.</p>
+            </div>
+            <div class="stopwatch">
+                <div id="display" class="display">00:00:00</div>
+                <div class="controls">
+                    <button id="startStop" class="btn btn-primary">
+                        <span id="startIcon" class="fas fa-play"></span> Start
+                    </button>
+                    <button id="lap" class="btn btn-secondary">
+                        <span class="fas fa-flag"></span> Lap
+                    </button>
+                    <button id="reset" class="btn btn-danger">
+                        <span class="fas fa-stop"></span> Reset
+                    </button>
+                </div>
+                <ul id="laps" class="list-group mt-3">
+                    <li class="list-group-item disabled">Lap Times</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script> let timer;
+let isRunning = false;
+let seconds = 0;
+let minutes = 0;
+let hours = 0;
+let lapCounter = 1;
+
+function startStop() {
+    if (isRunning) {
+        clearInterval(timer);
+        $("#startStop").text("Start");
+        isRunning = false;
+    } else {
+        timer = setInterval(updateTime, 1000);
+        $("#startStop").text("Stop");
+        isRunning = true;
+    }
+}
+
+function reset() {
+    clearInterval(timer);
+    $("#display").text("00:00:00");
+    $("#startStop").text("Start");
+    $("#laps").empty();
+    isRunning = false;
+    seconds = 0;
+    minutes = 0;
+    hours = 0;
+    lapCounter = 1;
+}
+
+function updateTime() {
+    seconds++;
+    if (seconds >= 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes >= 60) {
+            minutes = 0;
+            hours++;
+        }
+    }
+    $("#display").text(pad(hours) + ":" + pad(minutes) + ":" + pad(seconds));
+}
+
+function lap() {
+    const lapTime = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+    $("#laps").append(`<li class="list-group-item">Lap ${lapCounter}: ${lapTime}</li>`);
+    lapCounter++;
+}
+
+function pad(value) {
+    return value < 10 ? "0" + value : value;
+}
+
+$(document).ready(function() {
+    $("#startStop").click(startStop);
+    $("#reset").click(reset);
+    $("#lap").click(lap);
+});
+</script>
+</body>
+</html>
